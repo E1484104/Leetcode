@@ -1,0 +1,54 @@
+class Solution {
+public:
+    bool sorted(vector<int>& arr,int length){
+        for(int i=1;i<length;i++){
+            if(arr[i]<arr[i-1]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void flip(vector<int>& arr,int curr_index){
+        for(int i=0;i<curr_index/2+1;i++){
+            int temp=arr[i];
+            arr[i]=arr[curr_index-i];
+            arr[curr_index-i]=temp;
+        }
+    }
+
+    vector<int> pancakeSort(vector<int>& arr) {
+        vector<int> ans;
+        int length=arr.size();
+        for(int i=0;i<length;i++){
+            if(sorted(arr,length)){
+                break;
+            }
+            int curr_max=arr[0];
+            int curr_index=0;
+            for(int j=1;j<length-i;j++){
+                if(arr[j]>curr_max){
+                    curr_max=arr[j];
+                    curr_index=j;
+                }
+            }
+            if(sorted(arr,length)){
+                break;
+            }
+            if(curr_index==length-1){
+                continue;
+            }
+            if(curr_index==0){
+                ans.push_back(length-i);
+                flip(arr,length-1-i);
+                continue;
+            }
+            ans.push_back(curr_index+1);
+            ans.push_back(length-i);
+            flip(arr,curr_index);
+            flip(arr,length-1-i);
+            
+        }
+        return ans;
+    }
+};
