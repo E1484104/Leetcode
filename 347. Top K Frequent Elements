@@ -1,0 +1,60 @@
+#include <unordered_map>
+
+class Solution {
+public:
+    struct item{
+        int num;
+        int counter;
+        item(int element): num{element}, counter{1} {}
+    };
+
+    void BubbleDown(int idx, vector<item>& heap, int size){
+        while(2*idx+1<size){
+            int left = 2*idx+1;
+            int right = 2*idx+2;
+            int largeidx = (right==size || heap[left].counter>heap[right].counter) ? left : right;
+            if(heap[idx].counter<heap[largeidx].counter){
+                item temp = heap[idx];
+                heap[idx]=heap[largeidx];
+                heap[largeidx]=temp;
+                idx=largeidx;
+            }else{
+                break;
+            }
+        }
+    }
+
+    void HeapSort(vector<item>& heap, int k){
+        int n=heap.size();
+        for(int i=n-1;i>=0;i--){
+            BubbleDown(i,heap,n);
+        }
+        for(int i=n-1;i>=n-k;i--){
+            item temp = heap[0];
+            heap[0]=heap[i];
+            heap[i]=temp;
+            BubbleDown(0,heap,i);
+        }
+    }
+
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        int length=nums.size();
+        unordered_map<int, int> idx;
+        vector<item> heap;
+        vector<int> ans;
+        for(int i=0;i<length;i++){
+            if(idx.find(nums[i])==idx.end()){
+                heap.push_back(item(nums[i]));
+                idx[nums[i]]=heap.size()-1;
+            }else{
+                heap[idx[nums[i]]].counter+=1;
+            }
+        }
+        HeapSort(heap,k);
+        int HeapSize=heap.size();
+        for(int i=0;i<k;i++){
+            ans.push_back(heap[HeapSize-1-i].num);
+        }
+        return ans;
+    }
+};
